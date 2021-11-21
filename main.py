@@ -1,17 +1,18 @@
 import json
-from bravia.app_control import AppControl
-from bravia.settings import settings
+
+import bravia
+from bravia.settings import settings, Settings
 
 
 def main():
-    b = AppControl(**settings)
-    # request = b.set_power_status(status="off")
+    app_config = Settings(**settings)
+    b = bravia.Bravia(**app_config.dict())
 
-    # print(json.dumps(request, indent=2))
-    # for x in request:
-        # print(json.dumps(x.dict(), indent=2))
-
-    print(json.dumps(b.get_system_information(), indent=2))
+    sys_info = b.get_system_information()
+    print(sys_info.json(indent=2))
+    service_list: list = [svc.get("service") for svc in b.api_info()]
+    print(json.dumps(service_list, indent=2))
+    print(b.get_interface_information().json(indent=2))
 
     '''
     app_list: List[AppModel] = b.app_list()

@@ -1,45 +1,44 @@
 """
-bravia.app_control
-~~~~~~~~~~~~~~~~~~~~~
+app_control
+~~~~~~~~~~~
 
 Module for the appControl service.
 """
 
 from typing import List
 
-from .api import BraviaBase, Response
+from .bravia import Bravia, Response
 from .models import AppModel
 
 
-class AppControl(BraviaBase):
-    """
+class AppControl(Bravia):
+    r"""
     Provides methods to interact with the appControl
     service.
+
+    :param \*\*kwargs: Arguments that Bravia takes.
     """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.app = "appControl"
 
-    def app_list(self):
+    def app_list(self) -> List[AppModel]:
         """
         Get a list of applications available on the TV.
 
-        :return: :class:`Response <Response>` object
-        :rtype: requests.Response
-
-
-        :return: List[bravia.models.AppModel]
-        :rtype: List[bravia.models.AppModel]
+        :return :class:`List[bravia.models.AppModel]`
+        :rtype :class:`List[bravia.models.AppModel]`
         """
 
         params = {
             "method": "getApplicationList",
             "version": "1.0",
-            "id": self._rand_id(),
+            "id": self.rand_id(),
             "params": []
         }
-        app = "appControl"
-        resp: Response = self._get(params=params, app=app)
+
+        resp: Response = self._get(params=params, app=self.app)
 
         apps: List[AppModel] = [
             AppModel(**x) for x in resp.json().get("result")[0]
@@ -73,13 +72,12 @@ class AppControl(BraviaBase):
 
         params = {
             "method": "getApplicationStatusList",
-            "id": self._rand_id(),
+            "id": self.rand_id(),
             "params": app_params,
             "version": "1.0"
         }
 
-        app = "appControl"
-        resp: Response = self._get(params=params, app=app)
+        resp: Response = self._get(params=params, app=self.app)
 
         if resp.json().get("error"):
             return resp.json()
@@ -97,16 +95,16 @@ class AppControl(BraviaBase):
 
         params = {
             "method": "setActiveApp",
-            "id": self._rand_id(),
+            "id": self.rand_id(),
             "params": [{
                 "uri": app_uri
             }],
             "version": "1.0"
         }
-        app = "appControl"
-        resp: Response = self._get(params=params, app=app)
 
-        return resp.dict()
+        resp: Response = self._get(params=params, app=self.app)
+
+        return resp
 
     def terminate_apps(self) -> Response:
         """
@@ -118,12 +116,11 @@ class AppControl(BraviaBase):
 
         params = {
             "method": "terminateApps",
-            "id": self._rand_id(),
+            "id": self.rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        app = "appControl"
-        resp: Response = self._get(params=params, app=app)
+        resp: Response = self._get(params=params, app=self.app)
 
         return resp

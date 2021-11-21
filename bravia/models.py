@@ -20,7 +20,7 @@ class AppModel(BaseModel):
     icon: str
 
 
-class SystemInfoModel(BaseModel):
+class SystemInfo(BaseModel):
     product: str
     region: str
     language: str
@@ -33,7 +33,7 @@ class SystemInfoModel(BaseModel):
     cid: str
 
 
-class NetworkInfoModel(BaseModel):
+class NetworkInfo(BaseModel):
     hwAddr: str
     netmask: str
     ipAddrV4: str
@@ -43,11 +43,11 @@ class NetworkInfoModel(BaseModel):
     gateway: str
 
 
-class PowerStatusModel(BaseModel):
+class PowerStatus(BaseModel):
     status: str
 
 
-class InterfaceInfoModel(BaseModel):
+class InterfaceInfo(BaseModel):
     modelName: str
     serverName: str
     interfaceVersion: str
@@ -55,11 +55,11 @@ class InterfaceInfoModel(BaseModel):
     productCategory: str
 
 
-class LEDIndicatorModel(BaseModel):
+class LEDIndicator(BaseModel):
     mode: str
     status: Any
 
 
-class SupportedFuncModel(BaseModel):
+class SupportedFunc(BaseModel):
     value: str
     option: str
