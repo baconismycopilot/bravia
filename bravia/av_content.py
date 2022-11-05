@@ -8,7 +8,7 @@ Module for the avControl service.
 from .bravia import Bravia
 
 
-class AcContent(Bravia):
+class AvContent(Bravia):
     r"""
     Provides methods to interact with the avControl
     service.
@@ -19,7 +19,7 @@ class AcContent(Bravia):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.app = "avContent"
+        self.service = "avContent"
 
     def get_content_count(self):
         """
@@ -30,14 +30,14 @@ class AcContent(Bravia):
 
         params: dict = {
             "method": "getContentCount",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"source": "extInput:hdmi"}],
             "version": "1.1"
         }
 
-        resp = self._get(params=params, app=self.app)
+        resp = self._get(params=params, service=self.service)
 
-        return resp.json()
+        return resp
 
     def get_content_list(self):
         """
@@ -47,7 +47,7 @@ class AcContent(Bravia):
 
         params = {
             "method": "getContentList",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{
                 "stIdx": 0,
                 "cnt": 50,
@@ -56,6 +56,6 @@ class AcContent(Bravia):
             "version": "1.5"
         }
 
-        resp = self._get(params=params, app=self.app)
+        resp = self._get(params=params, service=self.service)
 
-        return resp.json()
+        return resp

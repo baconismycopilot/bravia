@@ -7,62 +7,46 @@ Module for the appControl service.
 
 from typing import List
 
-from .bravia import Bravia, Response
-from .models import AppModel
+from .bravia import Bravia
 
 
 class AppControl(Bravia):
-    r"""
+    """
     Provides methods to interact with the appControl
     service.
-
-    :param \*\*kwargs: Arguments that Bravia takes.
     """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.app = "appControl"
+        self.service = "appControl"
 
-    def app_list(self) -> List[AppModel]:
+    def app_list(self) -> List[dict]:
         """
         Get a list of applications available on the TV.
 
-        :return :class:`List[bravia.models.AppModel]`
-        :rtype :class:`List[bravia.models.AppModel]`
+        :return :class:`List[dict]`
+        :rtype :class:`List[dict]`
         """
 
         params = {
             "method": "getApplicationList",
             "version": "1.0",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": []
         }
 
-        resp: Response = self._get(params=params, app=self.app)
+        resp: List[dict] = self._get(params=params, service=self.service)
 
-        apps: List[AppModel] = [
-            AppModel(**x) for x in resp.json().get("result")[0]
-        ]
-
-        return apps
+        return resp
 
     def get_app_status(self, app=None) -> List[dict]:
         """
-        Get the status of app(s). If app is not
+        Get the status of service(s). If service is not
         specified then all apps will be returned.
 
-        :param app: (optional) Name of app to query.
+        :param app: (optional) Name of service to query.
         :return: `List[dict]`
         :rtype: `List[dict]`
-
-        Usage::
-
-            >>> from bravia.settings import settings
-            >>> from bravia.app_control import AppControl
-            >>> btv = AppControl(**settings))
-            >>> app_status = btv.get_app_status()
-            >>> type(app_status)
-            <class `list'>
         """
 
         if app is None:
@@ -72,21 +56,18 @@ class AppControl(Bravia):
 
         params = {
             "method": "getApplicationStatusList",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": app_params,
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
+        resp: List[dict] = self._get(params=params, service=self.service)
 
-        if resp.json().get("error"):
-            return resp.json()
+        return resp
 
-        return resp.json().get("result")[0]
-
-    def set_active_app(self, app_uri: str) -> Response:
+    def set_active_app(self, app_uri: str) -> List[dict]:
         """
-        Start an app that is in self.app_list().
+        Start a service that is in self.app_list().
 
         :param str app_uri: App URI
         :return: :class:`Response <Response>` object
@@ -95,18 +76,18 @@ class AppControl(Bravia):
 
         params = {
             "method": "setActiveApp",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{
                 "uri": app_uri
             }],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
+        resp: List[dict] = self._get(params=params, service=self.service)
 
         return resp
 
-    def terminate_apps(self) -> Response:
+    def terminate_apps(self) -> List[dict]:
         """
         Terminate all terminable apps. This is terminal.
 
@@ -116,11 +97,11 @@ class AppControl(Bravia):
 
         params = {
             "method": "terminateApps",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
+        resp: List[dict] = self._get(params=params, service=self.service)
 
         return resp

@@ -12,14 +12,19 @@ from typing import List
 import requests
 from requests import Response
 
-from bravia.models import (
-    SystemInfo,
-    NetworkInfo,
-    PowerStatus,
-    InterfaceInfo,
-    LEDIndicator,
-    SupportedFunc,
-)
+
+def handle_error(resp: Response) -> List[dict]:
+    """
+    Helper to check for and return the error
+    if it exists in the response.
+
+    :param resp:
+    :return: List[dict
+    """
+    if resp.json().get("error"):
+        return resp.json()
+
+    return resp.json().get("result")
 
 
 class Bravia:
@@ -28,13 +33,59 @@ class Bravia:
     with the Bravia line of TVs.
 
     `Sony Developer Docs <https://pro-bravia.sony.net/develop/integrate/ip-control/index.html>`_
+
+    Usage:
+    >>> import Bravia
+    >>> b = Bravia(ip='192.168.1.25')
+    >>> b.api_info()
     """
 
-    def __init__(self, protocol: str, ip: str, base: str):
-        self.base_url = f"{protocol}://{ip}{base}"
-        self.app = "system"
+    def __init__(self, ip: str, service: str = None):
+        self.base_url = f"http://{ip}/sony"
+        self.service = "system" if None else service
 
-    def api_info(self, service=None) -> dict:
+    def _get(self, params: dict, service: str) -> List[dict]:
+        """
+        Get data for the specified service and method.
+
+        :param dict params:
+        :param str service:
+
+        :return: :class:`Response <Response>` object
+        :rtype: requests.Response
+        """
+
+        url = f"{self.base_url}/{service}"
+        headers = {"X-Auth-PSK": "meseeks"}
+        resp: Response = requests.post(url, json=params, headers=headers)
+        resp.raise_for_status()
+
+        return handle_error(resp)
+
+    def _set(self, params: dict, service: str) -> List[dict]:
+        """
+        Set parameters for the given service and method.
+
+        :param dict params:
+        :param str service:
+
+        :return: :class:`Response <Response>` object
+        """
+
+        if not str(params.get("method")).startswith("set"):
+            r: Response = Response()
+            r.status_code = 404
+            r.reason = f"Invalid method for {service}"
+
+            return r
+
+        url = f"{self.base_url}/{service}"
+        resp: Response = requests.post(url, json=params)
+        resp.raise_for_status()
+
+        return handle_error(resp)
+
+    def api_info(self, service=None) -> List[dict]:
         """
         Get the available services and their
         API methods.
@@ -63,18 +114,15 @@ class Bravia:
 
         params = {
             "method": "getSupportedApiInfo",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": svc_params,
             "version": "1.0"
         }
 
         app = "guide"
-        resp = self._get(params=params, app=app)
+        resp = self._get(params=params, service=app)
 
-        if resp.json().get("error"):
-            return resp.json()
-
-        return resp.json().get("result")[0]
+        return resp
 
     def get_wol_mode(self) -> dict:
         """
@@ -86,17 +134,16 @@ class Bravia:
 
         params = {
             "method": "getWolMode",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp = self._get(params=params, app=self.app)
-        data: dict = resp.json()["result"][0]
+        resp = self._get(params=params, service=self.service)
 
-        return data
+        return resp
 
-    def set_wol_mode(self, mode: str):
+    def set_wol_mode(self, mode: str) -> dict:
         """
         Set the Wake on LAN mode.
 
@@ -117,19 +164,18 @@ class Bravia:
 
         params = {
             "method": "setWolMode",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"enabled": toggle}],
             "version": "1.0"
         }
 
-        resp = self._set(params=params, app=self.app)
+        resp = self._set(params=params, service=self.service)
 
-        if len(resp.json().get("result")) == 0:
-            return {"msg": f"WoL mode set to {mode}."}
+        # TODO: Error logic in _get and _set methods.
+        # if len(resp.json().get("result")) == 0:
+        # return {"msg": f"WoL mode set to {mode}."}
 
-        data: dict = resp.json()
-
-        return data
+        return resp
 
     def get_service_info(self, service: str) -> dict:
         """
@@ -143,11 +189,11 @@ class Bravia:
         return self.api_info(service=service)
 
     @staticmethod
-    def rand_id() -> int:
+    def _rand_id() -> int:
         """
-        The Bravia TV API uses a customized version of the JSON RPC
+        The Bravia TV API uses a customized JSON RPC
         protocol, which reserves the 'id' value 0. We
-        start with 1 and it must be int.
+        start with 1.
 
         :return :class:`int` random integer
         :rtype: :class:`int`
@@ -159,47 +205,7 @@ class Bravia:
 
         return tx_id
 
-    def _get(self, params: dict, app: str) -> Response:
-        """
-        Get data for the specified app and method.
-
-        :param dict params:
-        :param str app:
-
-        :return: :class:`Response <Response>` object
-        :rtype: requests.Response
-        """
-
-        url = f"{self.base_url}/{app}"
-        r: Response = requests.post(url, json=params)
-        r.raise_for_status()
-
-        return r
-
-    def _set(self, params: dict, app: str) -> Response:
-        """
-        Set parameters for the given app and method.
-
-        :param dict params:
-        :param str app:
-
-        :return: :class:`Response <Response>` object
-        """
-
-        if not str(params.get("method")).startswith("set"):
-            r: Response = Response()
-            r.status_code = 404
-            r.reason = f"Invalid method for {app}"
-
-            return r
-
-        url = f"{self.base_url}/{app}"
-        r: Response = requests.post(url, json=params)
-        r.raise_for_status()
-
-        return r
-
-    def get_system_information(self) -> SystemInfo:
+    def get_system_information(self) -> List[dict]:
         """
         Get system information.
 
@@ -209,37 +215,35 @@ class Bravia:
 
         params = {
             "method": "getSystemInformation",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: SystemInfo = SystemInfo(**resp.json().get("result")[0])
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp
 
-    def get_network_settings(self) -> dict:
+    def get_network_settings(self) -> List[dict]:
         """
         Get network information for all, interfaces.
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`List[dict]` response
+        :rtype: :class:`List[dict]`
         """
 
         params = {
             "method": "getNetworkSettings",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"netif": ""}],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: NetworkInfo = NetworkInfo(**resp.json().get("result")[0][0])
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data.dict()
+        return resp
 
-    def get_interface_information(self) -> InterfaceInfo:
+    def get_interface_information(self) -> List[dict]:
         """
         Get information about the REST API provided
         by device server.
@@ -250,17 +254,16 @@ class Bravia:
 
         params = {
             "method": "getInterfaceInformation",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: InterfaceInfo = InterfaceInfo(**resp.json().get("result")[0])
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp
 
-    def get_power_status(self) -> PowerStatus:
+    def get_power_status(self) -> List[dict]:
         """
         Get the power status of the TV.
 
@@ -270,15 +273,14 @@ class Bravia:
 
         params = {
             "method": "getPowerStatus",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: PowerStatus = PowerStatus(**resp.json().get("result")[0])
+        resp: Response = self._get(params=params, service="system")
 
-        return data
+        return resp
 
     def get_power_saving_mode(self):
         """
@@ -290,17 +292,16 @@ class Bravia:
 
         params = {
             "method": "getPowerSavingMode",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: dict = resp.json().get("result")[0]
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp
 
-    def get_led_status(self) -> LEDIndicator:
+    def get_led_status(self) -> List[dict]:
         """
         Get the LED indicator status.
 
@@ -310,17 +311,16 @@ class Bravia:
 
         params = {
             "method": "getLEDIndicatorStatus",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: LEDIndicator = LEDIndicator(**resp.json().get("result")[0])
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp
 
-    def get_supported_functions(self) -> List[SupportedFunc]:
+    def get_supported_functions(self) -> List[dict]:
         """
         Get the supported functions of the device.
 
@@ -330,17 +330,14 @@ class Bravia:
 
         params = {
             "method": "getSystemSupportedFunction",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: List[SupportedFunc] = [
-            SupportedFunc(**x) for x in resp.json()['result'][0]
-        ]
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp
 
     def set_power_status(self, status: str) -> dict:
         """
@@ -368,13 +365,13 @@ class Bravia:
 
         params = {
             "method": "setPowerStatus",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"status": toggle}],
             "version": "1.0"
         }
 
-        resp: Response = self._set(params=params, app=self.app)
-        data: dict = resp.json()
+        resp: Response = self._set(params=params, service="system")
+        data: dict = resp
 
         return data
 
@@ -399,18 +396,16 @@ class Bravia:
 
         params = {
             "method": "setPowerSavingMode",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"mode": mode}],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        if len(resp.json().get("result")) == 0:
-            return {"msg": f"Power saving mode set to {mode}."}
+        resp: Response = self._get(params=params, service=self.service)
+        # if len(resp.json().get("result")) == 0:
+        # return {"msg": f"Power saving mode set to {mode}."}
 
-        data: dict = resp.json().get("result")
-
-        return data
+        return resp
 
     def set_led_status(self, mode: str, status: str) -> dict:
         """
@@ -439,7 +434,7 @@ class Bravia:
 
         params = {
             "method": "setLEDIndicatorStatus",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{
                 "mode": mode,
                 "status": toggle
@@ -447,14 +442,12 @@ class Bravia:
             "version": "1.1"
         }
 
-        resp: Response = self._set(params=params, app=self.app)
+        resp: Response = self._set(params=params, service=self.service)
 
-        if len(resp.json().get("result")) == 0:
-            return {"msg": f"LED set to {mode}."}
+        # if len(resp.json().get("result")) == 0:
+        # return {"msg": f"LED set to {mode}."}
 
-        data: dict = resp.json()
-
-        return data
+        return resp
 
     def set_language(self, lang: str) -> dict:
         """
@@ -469,15 +462,14 @@ class Bravia:
 
         params = {
             "method": "setLanguage",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"language": lang}],
             "version": "1.0"
         }
 
-        resp: Response = self._set(params=params, app=self.app)
-        data: dict = resp.json()
+        resp: Response = self._set(params=params, service=self.service)
 
-        return data
+        return resp
 
     def reboot(self):
         """
@@ -488,12 +480,11 @@ class Bravia:
 
         params = {
             "method": "requestReboot",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._set(params=params, app=self.app)
-        data: dict = resp.json()
+        resp: Response = self._set(params=params, service=self.service)
 
-        return data
+        return resp

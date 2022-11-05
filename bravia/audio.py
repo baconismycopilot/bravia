@@ -7,7 +7,7 @@ Module for the audio service.
 
 from typing import List
 
-from bravia.bravia import Bravia, Response
+from .bravia import Bravia, Response
 
 
 class AudioControl(Bravia):
@@ -20,9 +20,9 @@ class AudioControl(Bravia):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.app = "audio"
+        self.service = "audio"
 
-    def get_sound_settings(self) -> dict:
+    def get_sound_settings(self) -> List[dict]:
         """
         Get the audio settings.
 
@@ -32,17 +32,16 @@ class AudioControl(Bravia):
 
         params = {
             "method": "getSoundSettings",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"target": "outputTerminal"}],
             "version": "1.1"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: dict = resp.json().get("result")[0]
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp.json()
 
-    def get_speaker_settings(self) -> dict:
+    def get_speaker_settings(self) -> List[dict]:
         """
         Get the speaker settings.
 
@@ -52,15 +51,14 @@ class AudioControl(Bravia):
 
         params = {
             "method": "getSpeakerSettings",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"target": "tvPosition"}],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: dict = resp.json().get("result")[0]
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp.json
 
     def get_volume_info(self) -> List[dict]:
         """
@@ -73,15 +71,14 @@ class AudioControl(Bravia):
 
         params = {
             "method": "getVolumeInformation",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [],
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, app=self.app)
-        data: List[dict] = resp.json().get("result")[0]
+        resp: Response = self._get(params=params, service=self.service)
 
-        return data
+        return resp.json()
 
     def mute(self, status: str) -> str:
         """
@@ -99,12 +96,12 @@ class AudioControl(Bravia):
 
         params = {
             "method": "setAudioMute",
-            "id": self.rand_id(),
+            "id": self._rand_id(),
             "params": [{"status": status_map.get(status)}],
             "version": "1.0"
         }
 
-        resp: Response = self._set(params=params, app=self.app)
+        resp: Response = self._set(params=params, service=self.service)
         data: str = resp.json().get("result")[0]
         if data == 0:
             msg: str = f"Mute {status}."
