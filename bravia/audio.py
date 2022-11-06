@@ -33,7 +33,7 @@ class AudioControl(Bravia):
             "method": "getSoundSettings",
             "id": self._rand_id(),
             "params": [{"target": "outputTerminal"}],
-            "version": "1.1"
+            "version": "1.1",
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)
@@ -51,10 +51,10 @@ class AudioControl(Bravia):
             "method": "getSpeakerSettings",
             "id": self._rand_id(),
             "params": [{"target": "tvPosition"}],
-            "version": "1.0"
+            "version": "1.0",
         }
 
-        resp: List[dict]= self._get(params=params, service=self.service)
+        resp: List[dict] = self._get(params=params, service=self.service)
 
         return resp
 
@@ -70,7 +70,7 @@ class AudioControl(Bravia):
             "method": "getVolumeInformation",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)
@@ -86,16 +86,13 @@ class AudioControl(Bravia):
         :return: :class:`List[dict]`
         """
 
-        status_map: dict = {
-            "off": False,
-            "on": True
-        }
+        status_map: dict = {"off": False, "on": True}
 
         params = {
             "method": "setAudioMute",
             "id": self._rand_id(),
             "params": [{"status": status_map.get(status)}],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: List[dict] = self._set(params=params, service=self.service)

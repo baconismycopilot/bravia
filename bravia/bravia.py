@@ -94,15 +94,19 @@ class Bravia:
         """
 
         if service is None:
-            svc_params = [{"services": [
-                "appControl",
-                "audio",
-                "avContent",
-                "encryption",
-                "system",
-                "video",
-                "videoScreen",
-            ]}]
+            svc_params = [
+                {
+                    "services": [
+                        "appControl",
+                        "audio",
+                        "avContent",
+                        "encryption",
+                        "system",
+                        "video",
+                        "videoScreen",
+                    ]
+                }
+            ]
         else:
             svc_params = [{"services": [service]}]
 
@@ -110,7 +114,7 @@ class Bravia:
             "method": "getSupportedApiInfo",
             "id": self._rand_id(),
             "params": svc_params,
-            "version": "1.0"
+            "version": "1.0",
         }
 
         app = "guide"
@@ -129,7 +133,7 @@ class Bravia:
             "method": "getWolMode",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp = self._get(params=params, service=self.service)
@@ -152,13 +156,13 @@ class Bravia:
             toggle = False
 
         if current_mode == toggle:
-            return {'msg': f"WoL mode was already {mode}."}
+            return {"msg": f"WoL mode was already {mode}."}
 
         params = {
             "method": "setWolMode",
             "id": self._rand_id(),
             "params": [{"enabled": toggle}],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp = self._set(params=params, service=self.service)
@@ -207,7 +211,7 @@ class Bravia:
             "method": "getSystemInformation",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service=self.service)
@@ -225,7 +229,7 @@ class Bravia:
             "method": "getNetworkSettings",
             "id": self._rand_id(),
             "params": [{"netif": ""}],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service=self.service)
@@ -244,7 +248,7 @@ class Bravia:
             "method": "getInterfaceInformation",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service=self.service)
@@ -262,7 +266,7 @@ class Bravia:
             "method": "getPowerStatus",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service="system")
@@ -280,7 +284,7 @@ class Bravia:
             "method": "getPowerSavingMode",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service=self.service)
@@ -298,7 +302,7 @@ class Bravia:
             "method": "getLEDIndicatorStatus",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service=self.service)
@@ -316,7 +320,7 @@ class Bravia:
             "method": "getSystemSupportedFunction",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service=self.service)
@@ -344,13 +348,13 @@ class Bravia:
             toggle = False
 
         if current_status == toggle:
-            return {'msg': f"Power status was already {status}."}
+            return {"msg": f"Power status was already {status}."}
 
         params = {
             "method": "setPowerStatus",
             "id": self._rand_id(),
             "params": [{"status": toggle}],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._set(params=params, service="system")
@@ -379,7 +383,7 @@ class Bravia:
             "method": "setPowerSavingMode",
             "id": self._rand_id(),
             "params": [{"mode": mode}],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._get(params=params, service=self.service)
@@ -415,11 +419,8 @@ class Bravia:
         params = {
             "method": "setLEDIndicatorStatus",
             "id": self._rand_id(),
-            "params": [{
-                "mode": mode,
-                "status": toggle
-            }],
-            "version": "1.1"
+            "params": [{"mode": mode, "status": toggle}],
+            "version": "1.1",
         }
 
         resp: Response = self._set(params=params, service=self.service)
@@ -443,7 +444,7 @@ class Bravia:
             "method": "setLanguage",
             "id": self._rand_id(),
             "params": [{"language": lang}],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._set(params=params, service=self.service)
@@ -461,7 +462,7 @@ class Bravia:
             "method": "requestReboot",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: Response = self._set(params=params, service=self.service)

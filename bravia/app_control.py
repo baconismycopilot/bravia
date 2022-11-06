@@ -31,7 +31,7 @@ class AppControl(Bravia):
             "method": "getApplicationList",
             "version": "1.0",
             "id": self._rand_id(),
-            "params": []
+            "params": [],
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)
@@ -57,7 +57,7 @@ class AppControl(Bravia):
             "method": "getApplicationStatusList",
             "id": self._rand_id(),
             "params": app_params,
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)
@@ -76,10 +76,8 @@ class AppControl(Bravia):
         params = {
             "method": "setActiveApp",
             "id": self._rand_id(),
-            "params": [{
-                "uri": app_uri
-            }],
-            "version": "1.0"
+            "params": [{"uri": app_uri}],
+            "version": "1.0",
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)
@@ -97,7 +95,7 @@ class AppControl(Bravia):
             "method": "terminateApps",
             "id": self._rand_id(),
             "params": [],
-            "version": "1.0"
+            "version": "1.0",
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)

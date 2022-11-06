@@ -31,7 +31,7 @@ class AvContent(Bravia):
             "method": "getContentCount",
             "id": self._rand_id(),
             "params": [{"source": "extInput:hdmi"}],
-            "version": "1.1"
+            "version": "1.1",
         }
 
         resp = self._get(params=params, service=self.service)
@@ -48,12 +48,8 @@ class AvContent(Bravia):
         params = {
             "method": "getContentList",
             "id": self._rand_id(),
-            "params": [{
-                "stIdx": 0,
-                "cnt": 50,
-                "uri": "extInput:hdmi"
-            }],
-            "version": "1.5"
+            "params": [{"stIdx": 0, "cnt": 50, "uri": "extInput:hdmi"}],
+            "version": "1.5",
         }
 
         resp = self._get(params=params, service=self.service)

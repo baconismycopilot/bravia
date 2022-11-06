@@ -31,7 +31,7 @@ class Video(Bravia):
             "method": "getPictureQualitySettings",
             "version": "1.0",
             "id": self._rand_id(),
-            "params": []
+            "params": [],
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)
@@ -51,10 +51,7 @@ class Video(Bravia):
             "method": "setPictureQualitySettings",
             "version": "1.0",
             "id": self._rand_id(),
-            "params": [{"settings": [{
-                "value": "2",
-                "target": "color"
-            }]}],
+            "params": [{"settings": [{"value": "2", "target": "color"}]}],
         }
 
         resp: List[dict] = self._set(params=params, service=self.service)
