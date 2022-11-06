@@ -336,7 +336,7 @@ class Bravia:
         :return: :class:`dict`
         """
 
-        current_status: str = self.get_power_status().status
+        current_status: str = self.get_power_status()[0].get("status")
         if current_status == "active":
             current_status: bool = True
         else:
@@ -357,10 +357,9 @@ class Bravia:
             "version": "1.0",
         }
 
-        resp: Response = self._set(params=params, service="system")
-        data: dict = resp
+        resp: List[dict] = self._set(params=params, service="system")
 
-        return data
+        return resp
 
     def set_power_saving_mode(self, mode: str):
         """
