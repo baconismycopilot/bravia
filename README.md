@@ -6,7 +6,7 @@ bravia is a python package to interact with the
 Sony Bravia line of displays. 
 
 
-[Sony Developer Docs](https://pro-bravia.sony.net/develop/integrate/ip-control/index.html>)
+[Sony Developer Docs](https://pro-bravia.sony.net/develop/integrate/ip-control/index.html)
 
 Example:
 
