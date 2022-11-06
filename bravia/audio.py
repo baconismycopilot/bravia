@@ -26,8 +26,7 @@ class AudioControl(Bravia):
         """
         Get the audio settings.
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -37,16 +36,15 @@ class AudioControl(Bravia):
             "version": "1.1"
         }
 
-        resp: Response = self._get(params=params, service=self.service)
+        resp: List[dict] = self._get(params=params, service=self.service)
 
-        return resp.json()
+        return resp
 
     def get_speaker_settings(self) -> List[dict]:
         """
         Get the speaker settings.
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -56,17 +54,16 @@ class AudioControl(Bravia):
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, service=self.service)
+        resp: List[dict]= self._get(params=params, service=self.service)
 
-        return resp.json
+        return resp
 
     def get_volume_info(self) -> List[dict]:
         """
         Get information about the volume
         and mute status.
 
-        :return: :class:`List[dict]` response
-        :rtype: :class:`List[dict]`
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -76,17 +73,17 @@ class AudioControl(Bravia):
             "version": "1.0"
         }
 
-        resp: Response = self._get(params=params, service=self.service)
+        resp: List[dict] = self._get(params=params, service=self.service)
 
-        return resp.json()
+        return resp
 
-    def mute(self, status: str) -> str:
+    def mute(self, status: str) -> List[dict]:
         """
         Set mute status.
 
         :param str status: on or off
-        :return: :class:`List[dict]` response
-        :rtype: :class:`List[dict]`
+
+        :return: :class:`List[dict]`
         """
 
         status_map: dict = {
@@ -101,11 +98,6 @@ class AudioControl(Bravia):
             "version": "1.0"
         }
 
-        resp: Response = self._set(params=params, service=self.service)
-        data: str = resp.json().get("result")[0]
-        if data == 0:
-            msg: str = f"Mute {status}."
-        else:
-            msg: str = data
+        resp: List[dict] = self._set(params=params, service=self.service)
 
-        return msg
+        return resp

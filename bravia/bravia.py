@@ -21,6 +21,7 @@ def handle_error(resp: Response) -> List[dict]:
     :param resp:
     :return: List[dict
     """
+
     if resp.json().get("error"):
         return resp.json()
 
@@ -32,15 +33,18 @@ class Bravia:
     Base class containing methods to interact
     with the Bravia line of TVs.
 
+    :param ip: :class:`str` IP address of the device.
+
     `Sony Developer Docs <https://pro-bravia.sony.net/develop/integrate/ip-control/index.html>`_
 
     Usage:
-    >>> import Bravia
+
+    >>> from bravia import Bravia
     >>> b = Bravia(ip='192.168.1.25')
     >>> b.api_info()
     """
 
-    def __init__(self, ip: str, service: str = None):
+    def __init__(self, ip: str, service: str = "system"):
         self.base_url = f"http://{ip}/sony"
         self.service = "system" if None else service
 
@@ -48,17 +52,15 @@ class Bravia:
         """
         Get data for the specified service and method.
 
-        :param dict params:
-        :param str service:
+        :param params: :class:`dict`
+        :param service: :class:`str`
 
-        :return: :class:`Response <Response>` object
-        :rtype: requests.Response
+        :return: :class:`List[dict]`
         """
 
         url = f"{self.base_url}/{service}"
         headers = {"X-Auth-PSK": "meseeks"}
         resp: Response = requests.post(url, json=params, headers=headers)
-        resp.raise_for_status()
 
         return handle_error(resp)
 
@@ -66,22 +68,15 @@ class Bravia:
         """
         Set parameters for the given service and method.
 
-        :param dict params:
-        :param str service:
+        :param params: :class:`dict`
+        :param service: :class:`str`
 
         :return: :class:`Response <Response>` object
         """
 
-        if not str(params.get("method")).startswith("set"):
-            r: Response = Response()
-            r.status_code = 404
-            r.reason = f"Invalid method for {service}"
-
-            return r
-
         url = f"{self.base_url}/{service}"
-        resp: Response = requests.post(url, json=params)
-        resp.raise_for_status()
+        headers = {"X-Auth-PSK": "meseeks"}
+        resp: Response = requests.post(url, json=params, headers=headers)
 
         return handle_error(resp)
 
@@ -93,10 +88,9 @@ class Bravia:
         If service is not specified then all
         services are returned.
 
-        :param [Optional] service:
+        :param service: :class:`Optional[str]`
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`List[dict]`
         """
 
         if service is None:
@@ -128,8 +122,7 @@ class Bravia:
         """
         Get the Wake on LAN mode.
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`dict`
         """
 
         params = {
@@ -148,8 +141,7 @@ class Bravia:
         Set the Wake on LAN mode.
 
         :param str mode: on or off
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`dict`
         """
 
         current_mode: str = self.get_wol_mode().get("enabled")
@@ -181,9 +173,9 @@ class Bravia:
         """
         Get the available API methods for a service.
 
-        :param str service:
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :param service: :class:`str` Name of the service to get.
+
+        :return: :class:`dict`
         """
 
         return self.api_info(service=service)
@@ -195,8 +187,7 @@ class Bravia:
         protocol, which reserves the 'id' value 0. We
         start with 1.
 
-        :return :class:`int` random integer
-        :rtype: :class:`int`
+        :return :class:`int` Random integer
         """
 
         rand_min: int = 1
@@ -209,8 +200,7 @@ class Bravia:
         """
         Get system information.
 
-        :return: :class:`SystemInfo <SystemInfo>` object
-        :rtype: bravia.models.SystemInfo
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -228,8 +218,7 @@ class Bravia:
         """
         Get network information for all, interfaces.
 
-        :return: :class:`List[dict]` response
-        :rtype: :class:`List[dict]`
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -248,8 +237,7 @@ class Bravia:
         Get information about the REST API provided
         by device server.
 
-        :return: :class:`InterfaceInfo <InterfaceInfo>` object
-        :rtype: bravia.models.InterfaceInfo
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -267,8 +255,7 @@ class Bravia:
         """
         Get the power status of the TV.
 
-        :return: :class:`PowerStatus <PowerStatus>` object
-        :rtype: bravia.models.PowerStatus
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -286,8 +273,7 @@ class Bravia:
         """
         Get the power saving mode.
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`dict`
         """
 
         params = {
@@ -305,8 +291,7 @@ class Bravia:
         """
         Get the LED indicator status.
 
-        :return: :class:`LEDIndicator <LEDIndicator>` object
-        :rtype: bravia.models.LEDIndicator
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -324,8 +309,7 @@ class Bravia:
         """
         Get the supported functions of the device.
 
-        :return: :class:`List[SupportedFunc] <SupportedFunc>` object
-        :rtype: List[bravia.models.SupportedFunc]
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -346,7 +330,6 @@ class Bravia:
         :param str status: `on` or `off`
 
         :return: :class:`dict`
-        :rtype: :class:`dict`
         """
 
         current_status: str = self.get_power_status().status
@@ -386,9 +369,7 @@ class Bravia:
         * high
         * pictureOff
 
-
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`dict`
         """
 
         if self.get_power_saving_mode() == mode:
@@ -419,8 +400,7 @@ class Bravia:
         * SimpleResponse
         * Off
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`dict`
         """
 
         led_status: LEDIndicator = self.get_led_status()
@@ -454,10 +434,9 @@ class Bravia:
         Set the language of the TV. This setting
         is region specific.
 
-        :param str lang:
+        :param lang: :class:`str`
 
-        :return: :class:`dict` response
-        :rtype: :class:`dict`
+        :return: :class:`dict`
         """
 
         params = {
@@ -475,7 +454,7 @@ class Bravia:
         """
         Reboot the TV.
 
-        :return:
+        :return: :class:`[]`
         """
 
         params = {

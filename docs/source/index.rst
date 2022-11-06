@@ -1,9 +1,9 @@
-Welcome to Bravia's documentation!
-==================================
+Bravia: Python module for bravia TVs
+====================================
 
 .. toctree::
    :maxdepth: 4
-   :caption: Contents
+   :caption: Contents:
 
    bravia
 

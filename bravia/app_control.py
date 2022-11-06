@@ -1,6 +1,6 @@
 """
 app_control
-~~~~~~~~~~~
+-----------
 
 Module for the appControl service.
 """
@@ -24,8 +24,7 @@ class AppControl(Bravia):
         """
         Get a list of applications available on the TV.
 
-        :return :class:`List[dict]`
-        :rtype :class:`List[dict]`
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -44,9 +43,9 @@ class AppControl(Bravia):
         Get the status of service(s). If service is not
         specified then all apps will be returned.
 
-        :param app: (optional) Name of service to query.
-        :return: `List[dict]`
-        :rtype: `List[dict]`
+        :param app: :class:`Optional[str]` Name of service to query.
+
+        :return: :class:`List[dict]`
         """
 
         if app is None:
@@ -70,8 +69,8 @@ class AppControl(Bravia):
         Start a service that is in self.app_list().
 
         :param str app_uri: App URI
-        :return: :class:`Response <Response>` object
-        :rtype: requests.Response
+
+        :return: :class:`List[dict]`
         """
 
         params = {
@@ -91,8 +90,7 @@ class AppControl(Bravia):
         """
         Terminate all terminable apps. This is terminal.
 
-        :return: :class:`Response <Response>` object
-        :rtype: requests.Response
+        :return: :class:`List[dict]`
         """
 
         params = {

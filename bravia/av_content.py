@@ -1,5 +1,5 @@
 """
-av_control
+av_content
 ==========
 
 Module for the avControl service.
@@ -14,7 +14,6 @@ class AvContent(Bravia):
     service.
 
     :param \*\*kwargs: Arguments that Bravia takes.
-
     """
 
     def __init__(self, **kwargs):
@@ -42,6 +41,7 @@ class AvContent(Bravia):
     def get_content_list(self):
         """
         Get content list.
+
         :return:
         """
 

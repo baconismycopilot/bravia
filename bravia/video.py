@@ -20,7 +20,13 @@ class Video(Bravia):
         super().__init__(**kwargs)
         self.service = "video"
 
-    def get_picture_quality_settings(self):
+    def get_picture_quality_settings(self) -> List[dict]:
+        """
+        Get picture quality settings.
+
+        :return: :class:`List[dict]`
+        """
+
         params = {
             "method": "getPictureQualitySettings",
             "version": "1.0",
@@ -32,7 +38,15 @@ class Video(Bravia):
 
         return resp
 
-    def set_picture_quality_settings(self, **kwargs):
+    def set_picture_quality_settings(self, **kwargs) -> List[dict]:
+        """
+        `Not implemented`
+
+        Set picture quality settings.
+
+        :return: :class:`List[dict]`
+        """
+
         params = {
             "method": "setPictureQualitySettings",
             "version": "1.0",
