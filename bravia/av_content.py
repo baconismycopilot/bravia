@@ -1,6 +1,6 @@
 """
 av_content
-==========
+~~~~~~~~~~
 
 Module for the avControl service.
 """
@@ -13,18 +13,19 @@ class AvContent(Bravia):
     Provides methods to interact with the avControl
     service.
 
-    :param \*\*kwargs: Arguments that Bravia takes.
+    :param \*\*kwargs: Arguments that :class:`Bravia` takes.
     """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.service = "avContent"
 
-    def get_content_count(self):
+    @property
+    def content_count(self):
         """
         Get the number of external inputs.
 
-        :return:
+        :rtype:
         """
 
         params: dict = {
@@ -38,11 +39,12 @@ class AvContent(Bravia):
 
         return resp
 
-    def get_content_list(self):
+    @property
+    def content_list(self):
         """
         Get content list.
 
-        :return:
+        :rtype:
         """
 
         params = {

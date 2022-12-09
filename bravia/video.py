@@ -12,7 +12,7 @@ from bravia import Bravia
 
 class Video(Bravia):
     """
-    Provides methods to interact with the appControl
+    Provides methods to interact with the Video
     service.
     """
 
@@ -20,18 +20,21 @@ class Video(Bravia):
         super().__init__(**kwargs)
         self.service = "video"
 
-    def get_picture_quality_settings(self) -> List[dict]:
+    @property
+    def picture_quality_settings(self, target=None) -> List[dict]:
         """
         Get picture quality settings.
 
-        :return: :class:`List[dict]`
+        :rtype: List[dict]
         """
+
+        target_params = [{"target": target}] if target else [{"target": ""}]
 
         params = {
             "method": "getPictureQualitySettings",
             "version": "1.0",
             "id": self._rand_id(),
-            "params": [],
+            "params": target_params,
         }
 
         resp: List[dict] = self._get(params=params, service=self.service)
@@ -44,7 +47,7 @@ class Video(Bravia):
 
         Set picture quality settings.
 
-        :return: :class:`List[dict]`
+        :rtype: List[dict]
         """
 
         params = {
