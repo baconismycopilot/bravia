@@ -11,21 +11,16 @@ for line in sys.stdin:
 		print("%-20s %s" % (target, help))
 endef
 export PRINT_HELP_PYSCRIPT
-BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-pyc clean-test clean-docs ## remove all build, test, coverage and Python artifacts
+clean: clean-pyc ## remove python artifacts
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pye' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
-clean-test: ## remove test artifacts
-	rm -rf .pytest_cache/
-
-lint: ## check style with flake8
-	flake8 .

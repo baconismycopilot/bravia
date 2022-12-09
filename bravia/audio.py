@@ -7,7 +7,7 @@ Module for the audio service.
 
 from typing import List
 
-from .bravia import Bravia, Response
+from .bravia import Bravia
 
 
 class AudioControl(Bravia):
@@ -15,18 +15,19 @@ class AudioControl(Bravia):
     Provides methods to interact with the audio
     service.
 
-    :param \*\*kwargs: Arguments that Bravia takes.
+    :param \*\*kwargs: Arguments that :class:`Bravia` takes.
     """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.service = "audio"
 
-    def get_sound_settings(self) -> List[dict]:
+    @property
+    def sound_settings(self) -> List[dict]:
         """
         Get the audio settings.
 
-        :return: :class:`List[dict]`
+        :rtype: List[dict]
         """
 
         params = {
@@ -40,11 +41,12 @@ class AudioControl(Bravia):
 
         return resp
 
-    def get_speaker_settings(self) -> List[dict]:
+    @property
+    def speaker_settings(self) -> List[dict]:
         """
         Get the speaker settings.
 
-        :return: :class:`List[dict]`
+        :rtype: List[dict]
         """
 
         params = {
@@ -58,12 +60,12 @@ class AudioControl(Bravia):
 
         return resp
 
-    def get_volume_info(self) -> List[dict]:
+    @property
+    def volume_info(self) -> List[dict]:
         """
-        Get information about the volume
-        and mute status.
+        Get information about the volume and mute status.
 
-        :return: :class:`List[dict]`
+        :rtype: List[dict]
         """
 
         params = {
@@ -81,9 +83,10 @@ class AudioControl(Bravia):
         """
         Set mute status.
 
-        :param str status: on or off
+        :param status: On or off
+        :type status: :class:`str`
 
-        :return: :class:`List[dict]`
+        :rtype: List[dict]
         """
 
         status_map: dict = {"off": False, "on": True}
