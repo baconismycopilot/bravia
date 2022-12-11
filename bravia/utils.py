@@ -14,7 +14,8 @@ def handle_error(resp: Response) -> List[dict]:
     :rtype: List[dict]
     """
 
-    if resp.json().get("error"):
-        return resp.json()
+    if not resp.status_code == 200:
+        print(resp.status_code)
+        return resp.json().get("error", [])
 
-    return resp.json().get("result")
+    return resp.json().get("result", [])

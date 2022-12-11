@@ -28,16 +28,11 @@ class Video(Bravia):
         :rtype: List[dict]
         """
 
-        target_params = [{"target": target}] if target else [{"target": ""}]
-
-        params = {
-            "method": "getPictureQualitySettings",
-            "version": "1.0",
-            "id": self._rand_id(),
-            "params": target_params,
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="getPictureQualitySettings",
+            params=[{"target": target}] if target else [{"target": ""}],
+        )
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -50,13 +45,10 @@ class Video(Bravia):
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "setPictureQualitySettings",
-            "version": "1.0",
-            "id": self._rand_id(),
-            "params": [{"settings": [{"value": "2", "target": "color"}]}],
-        }
-
-        resp: List[dict] = self._set(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="setPictureQualitySettings",
+            params=[{"settings": [{"value": "2", "target": "color"}]}],
+        )
+        resp: List[dict] = self._set(params=prepared_params, service=self.service)
 
         return resp
