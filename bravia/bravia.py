@@ -83,7 +83,7 @@ class Bravia:
         return handle_error(resp)
 
     def build_params(
-        self, method: str, version: Optional[str] = "1.0", params: Optional[list] = []
+            self, method: str, version: Optional[str] = "1.0", params: Optional[list] = []
     ) -> dict:
         """
         Build request parameters.
@@ -179,34 +179,22 @@ class Bravia:
 
         return resp
 
-    def set_wol_mode(self, mode: str) -> dict:
+    def set_wol_mode(self, mode: bool) -> dict:
         """
         Set the Wake on LAN mode.
 
-        :param mode: One of Off
-        :type mode: :class:`str`
+        :param mode: True or False
+        :type mode: :class:`bool`
 
         :rtype: dict
         """
 
-        current_mode: str = self.wol_mode().get("enabled")
-
-        if str(mode).lower() == "on":
-            toggle = True
-        else:
-            toggle = False
-
-        if current_mode == toggle:
-            return {"msg": f"WoL mode was already {mode}."}
-
-        params = {
-            "method": "setWolMode",
-            "id": self._rand_id(),
-            "params": [{"enabled": toggle}],
-            "version": "1.0",
-        }
-
-        resp = self._set(params=params, service=self.service)
+        current_mode: str = self.wol_mode[0].get("enabled")
+        prepared_params = self.build_params(
+            method="setWolMode",
+            params=[{"enabled": mode}]
+        )
+        resp = self._set(params=prepared_params, service=self.service)
 
         return resp
 
@@ -219,7 +207,6 @@ class Bravia:
         """
 
         prepared_params = self.build_params(method="getSystemInformation")
-
         resp: Response = self._get(params=prepared_params, service=self.service)
 
         return resp
