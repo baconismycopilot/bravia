@@ -6,7 +6,7 @@ the XBR-65X900H model.
 """
 
 from random import randint
-from typing import List
+from typing import List, Optional
 
 import requests
 from requests import Response
@@ -82,6 +82,32 @@ class Bravia:
 
         return handle_error(resp)
 
+    def build_params(
+        self, method: str, version: Optional[str] = "1.0", params: Optional[list] = []
+    ) -> dict:
+        """
+        Build request parameters.
+
+        :param method: Name of the method
+        :type method: :class:`str`
+        :param params: Optionally provided params, defaults to :class:`[]`
+        :type params: :class:`Optional[list]`
+        :param version: Version of the method to use, defaults to 1.0
+        :type version: :class`dict`
+
+        :return: Dictionary of request parameters
+        :rtype: :class:`dict`
+        """
+
+        body = {
+            "method": method,
+            "id": self._rand_id(),
+            "params": params,
+            "version": version,
+        }
+
+        return body
+
     def api_info(self, service=None) -> List[dict]:
         """
         Get the available services and their
@@ -93,8 +119,8 @@ class Bravia:
         :rtype: List[dict]
         """
 
-        if service is None:
-            svc_params = [
+        if not service:
+            services = [
                 {
                     "services": [
                         "appControl",
@@ -108,21 +134,34 @@ class Bravia:
                 }
             ]
         else:
-            svc_params = [{"services": [service]}]
+            services = [{"services": [service]}]
 
-        params = {
-            "method": "getSupportedApiInfo",
-            "id": self._rand_id(),
-            "params": svc_params,
-            "version": "1.0",
-        }
-
-        app = "guide"
-        resp = self._get(params=params, service=app)
+        prepared_params = self.build_params(
+            method="getSupportedApiInfo", params=services, version="1.0"
+        )
+        resp = self._get(params=prepared_params, service="guide")
 
         return resp
 
-    def _wol_mode(self) -> dict:
+    @staticmethod
+    def _rand_id() -> int:
+        """
+        The Bravia TV API uses a customized JSON RPC
+        protocol, which reserves the 'id' value 0. We
+        start with 1.
+
+        :return: Random integer in designated range
+        :rtype: int
+        """
+
+        rand_min: int = 1
+        rand_max: int = 2147483647
+        tx_id: int = randint(rand_min, rand_max)
+
+        return tx_id
+
+    @property
+    def wol_mode(self) -> dict:
         """
         Get the Wake on LAN mode.
 
@@ -171,39 +210,6 @@ class Bravia:
 
         return resp
 
-    def get_service_info(self, service: str) -> dict:
-        """
-        Get the available API methods for a service.
-
-        :param service: Name of the service to get
-        :type service: :class:`str`
-
-        :rtype: dict
-        """
-
-        return self.api_info(service=service)
-
-    @staticmethod
-    def _rand_id() -> int:
-        """
-        The Bravia TV API uses a customized JSON RPC
-        protocol, which reserves the 'id' value 0. We
-        start with 1.
-
-        :return: Random integer in designated range.
-        :rtype: int
-        """
-
-        rand_min: int = 1
-        rand_max: int = 2147483647
-        tx_id: int = randint(rand_min, rand_max)
-
-        return tx_id
-
-    @property
-    def wol_mode(self):
-        return self._wol_mode()
-
     @property
     def system_info(self) -> List[dict]:
         """
@@ -212,14 +218,9 @@ class Bravia:
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getSystemInformation",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
+        prepared_params = self.build_params(method="getSystemInformation")
 
-        resp: Response = self._get(params=params, service=self.service)
+        resp: Response = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -231,14 +232,10 @@ class Bravia:
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getNetworkSettings",
-            "id": self._rand_id(),
-            "params": [{"netif": ""}],
-            "version": "1.0",
-        }
-
-        resp: Response = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="getNetworkSettings", params=[{"netif": ""}]
+        )
+        resp: Response = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -250,14 +247,8 @@ class Bravia:
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getInterfaceInformation",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp: Response = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(method="getInterfaceInformation")
+        resp: Response = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -269,52 +260,8 @@ class Bravia:
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getPowerStatus",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
+        prepared_params = self.build_params(method="getPowerStatus")
         resp: List[dict] = self._get(params=params, service="system")
-
-        return resp
-
-    @property
-    def power_saving_mode(self) -> dict:
-        """
-        Get the power saving mode.
-
-        :rtype: dict
-        """
-
-        params = {
-            "method": "getPowerSavingMode",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
-
-        return resp
-
-    @property
-    def led_status(self) -> List[dict]:
-        """
-        Get the LED indicator status.
-
-        :rtype: List[dict]
-        """
-
-        params = {
-            "method": "getLEDIndicatorStatus",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
 
         return resp
 
@@ -326,13 +273,7 @@ class Bravia:
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getSystemSupportedFunction",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
+        prepared_params = self.build_params("getSystemSupportedFunction")
         resp: List[dict] = self._get(params=params, service=self.service)
 
         return resp
@@ -344,14 +285,11 @@ class Bravia:
         :rtype: list
         """
 
-        params = {
-            "method": "setPowerStatus",
-            "id": self._rand_id(),
-            "params": [{"status": True}],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._set(params=params, service="system")
+        prepared_params = self.build_params(
+            method="setPowerStatus",
+            params=[{"status": True}],
+        )
+        resp: List[dict] = self._set(params=prepared_params, service="system")
 
         return resp
 
@@ -362,14 +300,24 @@ class Bravia:
         :rtype:
         """
 
-        params = {
-            "method": "setPowerStatus",
-            "id": self._rand_id(),
-            "params": [{"status": False}],
-            "version": "1.0",
-        }
+        prepared_params = self.build_params(
+            method="setPowerStatus",
+            params=[{"status": False}],
+        )
+        resp: List[dict] = self._set(params=prepared_params, service="system")
 
-        resp: List[dict] = self._set(params=params, service="system")
+        return resp
+
+    @property
+    def power_saving_mode(self) -> dict:
+        """
+        Get the power saving mode.
+
+        :rtype: dict
+        """
+
+        prepared_params = self.build_params(method="getPowerSavingMode")
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -393,76 +341,75 @@ class Bravia:
         if self.power_saving_mode == mode:
             return {"msg": f"Power saving mode already set to {mode}."}
 
-        params = {
-            "method": "setPowerSavingMode",
-            "id": self._rand_id(),
-            "params": [{"mode": mode}],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="setPowerSavingMode",
+            params=[{"mode": mode}],
+        )
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
-    def set_led_status(self, mode: str, status: str) -> dict:
+    @property
+    def led_status(self) -> List[dict]:
+        """
+        Get the LED indicator status.
+
+        :rtype: List[dict]
+        """
+
+        prepared_params = self.build_params(method="getLEDIndicatorStatus")
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+
+        return resp
+
+    def set_led_status(self, mode: str, status: bool) -> dict:
         """
         Set the LED indicator mode.
 
-        Available options:
+        Options for :class:`mode`:
 
-        * Demo
-        * AutoBrightnessAdjust
-        * Dark
-        * SimpleResponse
-        * Off
+        - Demo
+        - AutoBrightnessAdjust
+        - Dark
+        - SimpleResponse
+        - Off
 
         :param mode: LED mode
         :type mode: :class:`str`
-        :param status: One or off.
-        :type status: :class:`str`
+        :param status: True or False.
+        :type status: :class:`bool`
 
         :rtype: dict
         """
 
-        led_status: LEDIndicator = self.led_status()
-        if led_status.mode == mode and led_status.status is True:
+        if self.led_status == mode and led_status.status is True:
             return {"msg": f"LED already set to {mode}."}
 
-        if status.lower() == "on":
-            toggle: str = "true"
-        else:
-            toggle: str = "false"
-
-        params = {
-            "method": "setLEDIndicatorStatus",
-            "id": self._rand_id(),
-            "params": [{"mode": mode, "status": toggle}],
-            "version": "1.1",
-        }
-
-        resp: List[dict] = self._set(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="setLEDIndicatorStatus",
+            params=[{"mode": mode, "status": status}],
+            version="1.1",
+        )
+        resp: List[dict] = self._set(params=prepared_params, service=self.service)
 
         return resp
 
-    def set_language(self, lang: str) -> dict:
+    def set_language(self, lang: str = "eng") -> dict:
         """
         Set the language of the TV. This setting
         is region specific.
 
-        :param lang: Set the language
+        :param lang: Set the language, defaults to :class:`eng`
         :type lang: :class:`str`
 
         :rtype: dict
         """
 
-        params = {
-            "method": "setLanguage",
-            "id": self._rand_id(),
-            "params": [{"language": lang}],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._set(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="setLanguage",
+            params=[{"language": lang}],
+        )
+        resp: List[dict] = self._set(params=prepared_params, service=self.service)
 
         return resp
 
@@ -473,13 +420,7 @@ class Bravia:
         :rtype: list
         """
 
-        params = {
-            "method": "requestReboot",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._set(params=params, service=self.service)
+        prepared_params = self.build_params(method="requestReboot")
+        resp: List[dict] = self._set(params=prepared_params, service=self.service)
 
         return resp

@@ -28,14 +28,8 @@ class AppControl(Bravia):
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getApplicationList",
-            "version": "1.0",
-            "id": self._rand_id(),
-            "params": [],
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(method="getApplicationList")
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -47,14 +41,8 @@ class AppControl(Bravia):
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getApplicationStatusList",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(method="getApplicationStatusList")
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -68,31 +56,22 @@ class AppControl(Bravia):
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "setActiveApp",
-            "id": self._rand_id(),
-            "params": [{"uri": app_uri}],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="setActiveApp",
+            params=[{"uri": app_uri}],
+        )
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
     def terminate_apps(self) -> List[dict]:
         """
-        Terminate all terminable apps. This is terminal.
+        Terminate all apps.
 
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "terminateApps",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(method="terminateApps")
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp

@@ -1,0 +1,7 @@
+__title__ = "bravia"
+__description__ = "Python package for Sony Bravia Profession Displays running Android."
+__version__ = ".01"
+__author__ = "Juston Roney"
+__author_email__ = "player.fourty@gmail.com"
+__license__ = "Apache 2.0"
+__copyright__ = "Copyright 2022 Juston Roney"

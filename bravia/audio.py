@@ -30,14 +30,12 @@ class AudioControl(Bravia):
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getSoundSettings",
-            "id": self._rand_id(),
-            "params": [{"target": "outputTerminal"}],
-            "version": "1.1",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="getSoundSettings",
+            params=[{"target": "outputTerminal"}],
+            version="1.1",
+        )
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -49,13 +47,10 @@ class AudioControl(Bravia):
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getSpeakerSettings",
-            "id": self._rand_id(),
-            "params": [{"target": "tvPosition"}],
-            "version": "1.0",
-        }
-
+        prepared_params = self.build_params(
+            method="getSpeakerSettings",
+            params=[{"target": "tvPosition"}],
+        )
         resp: List[dict] = self._get(params=params, service=self.service)
 
         return resp
@@ -68,14 +63,8 @@ class AudioControl(Bravia):
         :rtype: List[dict]
         """
 
-        params = {
-            "method": "getVolumeInformation",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._get(params=params, service=self.service)
+        prepared_params = self.build_params(method="getVolumeInformation")
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -91,13 +80,10 @@ class AudioControl(Bravia):
 
         status_map: dict = {"off": False, "on": True}
 
-        params = {
-            "method": "setAudioMute",
-            "id": self._rand_id(),
-            "params": [{"status": status_map.get(status)}],
-            "version": "1.0",
-        }
-
-        resp: List[dict] = self._set(params=params, service=self.service)
+        prepared_params = self.build_params(
+            method="setAudioMute",
+            params=[{"status": status_map.get(status)}],
+        )
+        resp: List[dict] = self._set(params=prepared_params, service=self.service)
 
         return resp

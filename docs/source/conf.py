@@ -9,21 +9,22 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
+
 import os
 import sys
 
-basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, basedir)
+sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
+print(sys.path[0])
 
 # -- Project information -----------------------------------------------------
+import bravia
 
-project = "bravia"
-copyright = "2021, Juston Roney"
-author = "Juston Roney"
+project = bravia.__title__
+copyright = bravia.__copyright__
+author = bravia.__author__
 
 # The full version, including alpha/beta/rc tags
-release = ".01"
+release = bravia.__version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -49,11 +50,7 @@ exclude_patterns = [".DS_Store", "build"]
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
-# html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
-# html_theme = 'python_docs_theme'
-# html_theme = 'press'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
