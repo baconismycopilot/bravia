@@ -39,4 +39,6 @@ This will show the API for each service available on the display. Use this devel
 
 # Documentation
 
-Read the docs [here](https://github.com/baconismycopilot/bravia)
+[Read the docs](https://bravia.readthedocs.io/en/latest/index.html)
+
+[View on github](https://github.com/baconismycopilot/bravia)
