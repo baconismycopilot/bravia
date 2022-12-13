@@ -83,7 +83,7 @@ class Bravia:
         return handle_error(resp)
 
     def build_params(
-            self, method: str, version: Optional[str] = "1.0", params: Optional[list] = []
+        self, method: str, version: Optional[str] = "1.0", params: Optional[list] = []
     ) -> dict:
         """
         Build request parameters.
@@ -191,8 +191,7 @@ class Bravia:
 
         current_mode: str = self.wol_mode[0].get("enabled")
         prepared_params = self.build_params(
-            method="setWolMode",
-            params=[{"enabled": mode}]
+            method="setWolMode", params=[{"enabled": mode}]
         )
         resp = self._set(params=prepared_params, service=self.service)
 
