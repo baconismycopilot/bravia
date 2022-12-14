@@ -51,7 +51,7 @@ class AudioControl(Bravia):
             method="getSpeakerSettings",
             params=[{"target": "tvPosition"}],
         )
-        resp: List[dict] = self._get(params=params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 

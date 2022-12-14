@@ -1,33 +1,48 @@
-bravia
+Bravia
 ======
+
+The base class. This class contains all the ``system`` service methods.
+Every class inherits from :class:`Bravia`.
 
 .. autoclass:: bravia.Bravia
     :members:
     :show-inheritance:
 
-app_control
-===========
+
+AppControl
+==========
+
+This class contains the ``appControl`` service methods.
 
 .. autoclass:: bravia.AppControl
    :members:
    :show-inheritance:
 
-audio_control
-=============
+
+AudioControl
+============
+
+This class contains the ``audioControl`` service methods.
 
 .. autoclass:: bravia.AudioControl
    :members:
    :show-inheritance:
 
-av_content
-==========
+
+AvContent
+=========
+
+This class contains the ``avContent`` service methods.
 
 .. autoclass:: bravia.AvContent
    :members:
    :show-inheritance:
 
-video
+
+Video
 =====
+
+This class  contains the ``video`` service methods.
 
 .. autoclass:: bravia.Video
    :members:
