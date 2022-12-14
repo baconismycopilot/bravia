@@ -22,7 +22,7 @@ class Bravia:
     :param ip: IP address of the device
     :type ip: :class:`str`
     :param pre_shared_key: Pre-shared key configured on TV
-    :type ip: :class:`Optional[str]`
+    :type pre_shared_key: :class:`Optional[str]`
 
     `Sony Developer Docs <https://pro-bravia.sony.net/develop/integrate/ip-control/index.html>`_
 
@@ -35,7 +35,7 @@ class Bravia:
 
     def __init__(self, ip: str, service: str = "system", pre_shared_key=None):
         self.base_url = f"http://{ip}/sony"
-        self.service = "system" if None else service
+        self.service = service if service else "system"
         self.pre_shared_key = pre_shared_key if pre_shared_key else None
 
     def _get(self, params: dict, service: str) -> List[dict]:
@@ -189,7 +189,6 @@ class Bravia:
         :rtype: dict
         """
 
-        current_mode: str = self.wol_mode[0].get("enabled")
         prepared_params = self.build_params(
             method="setWolMode", params=[{"enabled": mode}]
         )
@@ -247,7 +246,7 @@ class Bravia:
         """
 
         prepared_params = self.build_params(method="getPowerStatus")
-        resp: List[dict] = self._get(params=params, service="system")
+        resp: List[dict] = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -260,7 +259,7 @@ class Bravia:
         """
 
         prepared_params = self.build_params("getSystemSupportedFunction")
-        resp: List[dict] = self._get(params=params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service=self.service)
 
         return resp
 
@@ -283,7 +282,7 @@ class Bravia:
         """
         Power on the TV.
 
-        :rtype:
+        :rtype: list
         """
 
         prepared_params = self.build_params(
@@ -368,7 +367,7 @@ class Bravia:
         :rtype: dict
         """
 
-        if self.led_status == mode and led_status.status is True:
+        if self.led_status == mode and self.led_status.status is True:
             return {"msg": f"LED already set to {mode}."}
 
         prepared_params = self.build_params(
