@@ -20,7 +20,6 @@ class AudioControl(Bravia):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.service = "audio"
 
     @property
     def sound_settings(self) -> List[dict]:
@@ -35,7 +34,7 @@ class AudioControl(Bravia):
             params=[{"target": "outputTerminal"}],
             version="1.1",
         )
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="audio")
 
         return resp
 
@@ -51,7 +50,7 @@ class AudioControl(Bravia):
             method="getSpeakerSettings",
             params=[{"target": "tvPosition"}],
         )
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="audio")
 
         return resp
 
@@ -64,7 +63,7 @@ class AudioControl(Bravia):
         """
 
         prepared_params = self.build_params(method="getVolumeInformation")
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="audio")
 
         return resp
 
@@ -84,6 +83,6 @@ class AudioControl(Bravia):
             method="setAudioMute",
             params=[{"status": status_map.get(status)}],
         )
-        resp: List[dict] = self._set(params=prepared_params, service=self.service)
+        resp: List[dict] = self._set(params=prepared_params, service="audio")
 
         return resp
