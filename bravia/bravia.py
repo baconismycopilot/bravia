@@ -33,9 +33,8 @@ class Bravia:
     >>> b.api_info()
     """
 
-    def __init__(self, ip: str, service: str = "system", pre_shared_key=None):
+    def __init__(self, ip: str, pre_shared_key=None):
         self.base_url = f"http://{ip}/sony"
-        self.service = service if service else "system"
         self.pre_shared_key = pre_shared_key if pre_shared_key else None
 
     def _get(self, params: dict, service: str) -> List[dict]:
@@ -114,7 +113,7 @@ class Bravia:
         API methods.
 
         :param service: Service name, defaults to all
-        :type service: :class:`Optional[str]`
+        :type service: :class:`str`
 
         :rtype: List[dict]
         """
@@ -175,7 +174,7 @@ class Bravia:
             "version": "1.0",
         }
 
-        resp = self._get(params=params, service=self.service)
+        resp = self._get(params=params, service="system")
 
         return resp
 
@@ -192,7 +191,7 @@ class Bravia:
         prepared_params = self.build_params(
             method="setWolMode", params=[{"enabled": mode}]
         )
-        resp = self._set(params=prepared_params, service=self.service)
+        resp = self._set(params=prepared_params, service="system")
 
         return resp
 
@@ -205,7 +204,7 @@ class Bravia:
         """
 
         prepared_params = self.build_params(method="getSystemInformation")
-        resp: Response = self._get(params=prepared_params, service=self.service)
+        resp: Response = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -220,7 +219,7 @@ class Bravia:
         prepared_params = self.build_params(
             method="getNetworkSettings", params=[{"netif": ""}]
         )
-        resp: Response = self._get(params=prepared_params, service=self.service)
+        resp: Response = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -233,7 +232,7 @@ class Bravia:
         """
 
         prepared_params = self.build_params(method="getInterfaceInformation")
-        resp: Response = self._get(params=prepared_params, service=self.service)
+        resp: Response = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -259,7 +258,7 @@ class Bravia:
         """
 
         prepared_params = self.build_params("getSystemSupportedFunction")
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -302,7 +301,7 @@ class Bravia:
         """
 
         prepared_params = self.build_params(method="getPowerSavingMode")
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -330,7 +329,7 @@ class Bravia:
             method="setPowerSavingMode",
             params=[{"mode": mode}],
         )
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -343,7 +342,7 @@ class Bravia:
         """
 
         prepared_params = self.build_params(method="getLEDIndicatorStatus")
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -375,7 +374,7 @@ class Bravia:
             params=[{"mode": mode, "status": status}],
             version="1.1",
         )
-        resp: List[dict] = self._set(params=prepared_params, service=self.service)
+        resp: List[dict] = self._set(params=prepared_params, service="system")
 
         return resp
 
@@ -394,7 +393,7 @@ class Bravia:
             method="setLanguage",
             params=[{"language": lang}],
         )
-        resp: List[dict] = self._set(params=prepared_params, service=self.service)
+        resp: List[dict] = self._set(params=prepared_params, service="system")
 
         return resp
 
@@ -406,6 +405,6 @@ class Bravia:
         """
 
         prepared_params = self.build_params(method="requestReboot")
-        resp: List[dict] = self._set(params=prepared_params, service=self.service)
+        resp: List[dict] = self._set(params=prepared_params, service="system")
 
         return resp

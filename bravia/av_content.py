@@ -18,7 +18,6 @@ class AvContent(Bravia):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.service = "avContent"
 
     @property
     def content_count(self):
@@ -33,7 +32,7 @@ class AvContent(Bravia):
             params=[{"source": "extInput:hdmi"}],
             version="1.1",
         )
-        resp = self._get(params=prepared_params, service=self.service)
+        resp = self._get(params=prepared_params, service="avContent")
 
         return resp
 
@@ -50,6 +49,6 @@ class AvContent(Bravia):
             params=[{"stIdx": 0, "cnt": 50, "uri": "extInput:hdmi"}],
             version="1.5",
         )
-        resp = self._get(params=prepared_params, service=self.service)
+        resp = self._get(params=prepared_params, service="avContent")
 
         return resp

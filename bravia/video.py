@@ -18,7 +18,6 @@ class Video(Bravia):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.service = "video"
 
     @property
     def picture_quality_settings(self, target=None) -> List[dict]:
@@ -32,7 +31,7 @@ class Video(Bravia):
             method="getPictureQualitySettings",
             params=[{"target": target}] if target else [{"target": ""}],
         )
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="video")
 
         return resp
 
@@ -49,6 +48,6 @@ class Video(Bravia):
             method="setPictureQualitySettings",
             params=[{"settings": [{"value": "2", "target": "color"}]}],
         )
-        resp: List[dict] = self._set(params=prepared_params, service=self.service)
+        resp: List[dict] = self._set(params=prepared_params, service="video")
 
         return resp

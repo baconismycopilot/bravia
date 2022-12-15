@@ -18,7 +18,6 @@ class AppControl(Bravia):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.service = "appControl"
 
     @property
     def app_list(self) -> List[dict]:
@@ -29,7 +28,7 @@ class AppControl(Bravia):
         """
 
         prepared_params = self.build_params(method="getApplicationList")
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="appControl")
 
         return resp
 
@@ -42,7 +41,7 @@ class AppControl(Bravia):
         """
 
         prepared_params = self.build_params(method="getApplicationStatusList")
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="appControl")
 
         return resp
 
@@ -60,7 +59,7 @@ class AppControl(Bravia):
             method="setActiveApp",
             params=[{"uri": app_uri}],
         )
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="appControl")
 
         return resp
 
@@ -72,6 +71,6 @@ class AppControl(Bravia):
         """
 
         prepared_params = self.build_params(method="terminateApps")
-        resp: List[dict] = self._get(params=prepared_params, service=self.service)
+        resp: List[dict] = self._get(params=prepared_params, service="appControl")
 
         return resp

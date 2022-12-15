@@ -17,5 +17,6 @@ def handle_error(resp: Response) -> List[dict]:
     if not resp.status_code == 200:
         print(resp.status_code)
         return resp.json().get("error", [])
+    print(resp.json())
 
     return resp.json().get("result", [])
