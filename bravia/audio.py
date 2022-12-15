@@ -67,21 +67,19 @@ class AudioControl(Bravia):
 
         return resp
 
-    def mute(self, status: str) -> List[dict]:
+    def mute(self, status: bool) -> List[dict]:
         """
         Set mute status.
 
-        :param status: On or off
-        :type status: :class:`str`
+        :param status: True or False
+        :type status: :class:`bool`
 
         :rtype: List[dict]
         """
 
-        status_map: dict = {"off": False, "on": True}
-
         prepared_params = self.build_params(
             method="setAudioMute",
-            params=[{"status": status_map.get(status)}],
+            params=[{"status": status}],
         )
         resp: List[dict] = self._set(params=prepared_params, service="audio")
 

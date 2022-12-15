@@ -167,14 +167,8 @@ class Bravia:
         :rtype: dict
         """
 
-        params = {
-            "method": "getWolMode",
-            "id": self._rand_id(),
-            "params": [],
-            "version": "1.0",
-        }
-
-        resp = self._get(params=params, service="system")
+        prepared_params = self.build_params(method="getWolMode")
+        resp = self._get(params=prepared_params, service="system")
 
         return resp
 
@@ -257,7 +251,7 @@ class Bravia:
         :rtype: List[dict]
         """
 
-        prepared_params = self.build_params("getSystemSupportedFunction")
+        prepared_params = self.build_params(method="getSystemSupportedFunction")
         resp: List[dict] = self._get(params=prepared_params, service="system")
 
         return resp
