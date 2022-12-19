@@ -16,16 +16,22 @@ in the [What is it?](#What-is-it?) section.
 
 # Quickstart
 
+## Install Requirements
+
+```python
+pip install -r requirements.txt
+```
+
 ## Import bravia
 
 ```python
-    >>> from bravia import Bravia
+>>> from bravia import Bravia
 ```
 
 ## Create an instance of the Bravia class
 
 ```python
-    >>> b = Bravia(ip='192.168.1.25')
+>>> b = Bravia(ip='192.168.1.25')
 ```
 
 ## Make a request
@@ -34,7 +40,7 @@ This will show the API for each service available on the display. Use this devel
 [What is it?](#What-is-it?) to see more functionality.
 
 ```python
-    >>> b.api_info()
+>>> b.api_info()
 ```
 
 # Documentation
