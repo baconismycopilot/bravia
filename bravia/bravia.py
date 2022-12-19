@@ -33,7 +33,7 @@ class Bravia:
     >>> b.api_info()
     """
 
-    def __init__(self, ip: str, pre_shared_key=None):
+    def __init__(self, ip: str, pre_shared_key=Optional[str]):
         self.base_url = f"http://{ip}/sony"
         self.pre_shared_key = pre_shared_key if pre_shared_key else None
 
@@ -82,7 +82,7 @@ class Bravia:
         return handle_error(resp)
 
     def build_params(
-        self, method: str, version: Optional[str] = "1.0", params: Optional[list] = []
+            self, method: str, version: Optional[str] = "1.0", params: Optional[list] = []
     ) -> dict:
         """
         Build request parameters.
