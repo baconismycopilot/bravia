@@ -1,4 +1,4 @@
-.PHONY: clean docs help
+.PHONY: clean docs help test
 .DEFAULT_GOAL := help
 
 define PRINT_HELP_PYSCRIPT
@@ -26,3 +26,7 @@ clean-pyc: ## remove Python file artifacts
 
 clean-test: ## remove pytest artifacts
 	find . -name '.pytest_cache' -exec rm -rf {} +
+
+test: ## run tests
+	pytest tests/
+
